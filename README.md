@@ -1,7 +1,7 @@
 # GrpcGettingStarted
 Grpc exploration via getting started tutorial
 
-Z>gRPC is a open source high performance Remote Procedure Call (RPC) that is agnostic from any programming language.
+gRPC is a open source high performance Remote Procedure Call (RPC) that is agnostic from any programming language.
 It can efficiently connect services in and across data centers with pluggable support for load balancing, tracing, health checking and authentication.
 
 It provides a nice set of tools to make it very performant, 
