@@ -15,3 +15,9 @@ However when trying to achieve loosely coupled services there could be a better 
 Defines the contracts that exposes our API, the messages that it handles and returns, and the service method notation that process the request.
 As said before there are a lot of built-in features that would make gRPC a nice option if you system requires nice performance and scalability.
 It transports through the network in a more light way than plain text JSON so it will save network bandwidth.
+
+## Server streaming
+
+It keeps a single connection opened allowing bidirectional communication back and forth between client to server.
+
+[comment]: <> (## Documentation)

@@ -2,10 +2,13 @@
 
 option csharp_namespace = "GrpcService.Server";
 
+import "google/protobuf/timestamp.proto";
+
 package weather;
 
 service WeatherService {
   rpc GetCurrentWeather (GetCurrentWeatherForCity) returns (WeatherResponse);
+  rpc GetCurrentWeatherStream (GetCurrentWeatherForCity) returns (stream WeatherResponse);
 }
 
 message GetCurrentWeatherForCity {
@@ -21,4 +24,5 @@ message GetCurrentWeatherForCity {
 message WeatherResponse {
   double temperature = 1;
   double feels_like = 2;
+  google.protobuf.Timestamp timestamp = 3;
 }
