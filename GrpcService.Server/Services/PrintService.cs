@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Net.Http;
-using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
-using GrpcService.Server.Contracts;
 using Microsoft.Extensions.Logging;
 
 namespace GrpcService.Server.Services

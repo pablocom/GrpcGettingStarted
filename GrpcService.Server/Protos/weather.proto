@@ -4,7 +4,6 @@ option csharp_namespace = "GrpcService.Server";
 
 import "google/protobuf/timestamp.proto";
 
-
 package weather;
 
 service WeatherService {

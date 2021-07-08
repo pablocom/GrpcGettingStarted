@@ -4,6 +4,8 @@ option csharp_namespace = "GrpcService.Server";
 
 import "google/protobuf/empty.proto";
 
+package print;
+
 service PrintService {
   rpc PrintStream (stream PrintRequest) returns (google.protobuf.Empty);
 }
