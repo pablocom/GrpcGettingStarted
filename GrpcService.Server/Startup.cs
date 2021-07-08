@@ -33,6 +33,7 @@ namespace GrpcService.Server
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGrpcService<GrpcService.Server.Services.WeatherService>();
+                endpoints.MapGrpcService<GrpcService.Server.Services.PrintService>();
 
                 endpoints.MapGet("/",
                     async context =>

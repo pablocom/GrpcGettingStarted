@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net.Http;
 using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
@@ -21,7 +20,7 @@ namespace GrpcService.Server.Services
             _logger = logger;
         }
         
-        public override async Task<WeatherResponse> GetCurrentWeather(GetCurrentWeatherForCity request, ServerCallContext context)
+        public override async Task<WeatherResponse> GetCurrentWeather(GetCurrentWeatherForCityRequest request, ServerCallContext context)
         {
             var httpClient = _httpClientFactory.CreateClient();
 
@@ -30,12 +29,14 @@ namespace GrpcService.Server.Services
             {
                 Temperature = temperatures!.Main.Temp,
                 FeelsLike = temperatures.Main.FeelsLike,
-                Timestamp = Timestamp.FromDateTime(DateTime.UtcNow)
+                Timestamp = Timestamp.FromDateTime(DateTime.UtcNow),
+                City = request.City,
+                Units = request.Units
             };
         }
 
         public override async Task GetCurrentWeatherStream(
-            GetCurrentWeatherForCity request,
+            GetCurrentWeatherForCityRequest request,
             IServerStreamWriter<WeatherResponse> responseStream,
             ServerCallContext context)
         {
@@ -54,13 +55,41 @@ namespace GrpcService.Server.Services
                 {
                     Temperature = temperatures!.Main.Temp,
                     FeelsLike = temperatures.Main.FeelsLike,
-                    Timestamp = Timestamp.FromDateTime(DateTime.UtcNow)
+                    Timestamp = Timestamp.FromDateTime(DateTime.UtcNow),
+                    City = request.City,
+                    Units = request.Units
                 });
                 await Task.Delay(1000);
             }
         }
 
-        private static async Task<Temperatures> GetCurrentTemperaturesAsync(GetCurrentWeatherForCity request, HttpClient httpClient)
+        public override async Task<MultiWeatherResponse> GetMultiCurrentWeatherStream(
+            IAsyncStreamReader<GetCurrentWeatherForCityRequest> requestStream, 
+            ServerCallContext context)
+        {
+            
+            
+            var httpClient = _httpClientFactory.CreateClient();
+            var response = new MultiWeatherResponse()
+            {
+                Weather = { }
+            };
+            await foreach (var request in requestStream.ReadAllAsync()) // Client streaming for gRPC
+            {
+                var temperatures = await GetCurrentTemperaturesAsync(request, httpClient);
+                response.Weather.Add(new WeatherResponse()
+                {
+                    Temperature = temperatures!.Main.Temp,
+                    FeelsLike = temperatures.Main.FeelsLike,
+                    Timestamp = Timestamp.FromDateTime(DateTime.UtcNow),
+                    City = request.City,
+                    Units = request.Units
+                });
+            }
+            return response;
+        }
+
+        private static async Task<Temperatures> GetCurrentTemperaturesAsync(GetCurrentWeatherForCityRequest request, HttpClient httpClient)
         {
             var uri = $"https://api.openweathermap.org/data/2.5/weather?q={request.City}&appid=33437061427810ad3d26f6ae0ebac594&units={request.Units}";
             var responseText = await httpClient.GetStringAsync(uri).ConfigureAwait(false);
